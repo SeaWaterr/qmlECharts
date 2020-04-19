@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="qrc:///html/echarts.js"></script>
+    <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+</head>
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+    }
+    #main {
+        width: 100%;
+        height: 100%;
+        position: absolute
+    }
+</style>
+<body>
+    <div id="main" ></div>
+    <script type="text/javascript">
+    // 这是QML端的QtObject
+    var backend;
+    window.onload = function()
+    {
+        new QWebChannel(qt.webChannelTransport, function(channel) {
+        // 在channel.object下，所有发布的对象在通道中都是可用的
+        // 在附加的WebChannel.id属性中设置的标识符。
+            backend = channel.objects.backend;
+            //连接信号
+            backend.someSignal.connect(function(y,x) {
+                       data.push([y,x]);
+                   myChart.setOption({
+                       series: [{
+                           data: data
+                       }]
+                   });
+            });
+        });
+    }
+    var data = [[0,820], [1,932], [2,901], [3,934], [4,1290], [5,1330], [6,1320]]
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    option = {
+        xAxis: {
+        },
+        yAxis: {
+        },
+        series: [{
+            data: data,
+            type: 'line'
+        }]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+
+
+    </script>
+</body>
+</html>
+
